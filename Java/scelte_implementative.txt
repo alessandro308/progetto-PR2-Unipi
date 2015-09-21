@@ -1,0 +1,9 @@
+Il sistema si basa sull'utilizzo di due classi principali che gestiscono la collezione di utenti o di documenti, rispettivamente UserDb e Library.
+
+I documenti sono oggetti di tipo DigitalDoc che vengono raccolti da una LinkedList all'interno di Library. È stato scelta la LinkedList per l'implementazione che permette di usare la funzione pop(elem).
+
+Gli utenti sono oggetti di tipo User{name, password} organizzati in una Lista tramite la classe UserDb
+
+Tutti le informazione dell'User sono private dell'oggetto ed è compito dell'oggetto User verificare il login per se stesso tramite la funzione checkPsw.
+
+

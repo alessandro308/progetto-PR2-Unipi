@@ -1,0 +1,63 @@
+OCAML:
+#------------------------------------------------------------------------------------#
+ISTRUZIONI PER COMPILARE / ESEGUIRE IL CODICE:
+
+aprire interpreter "OCAML < definitivo.ml"
+
+#------------------------------------------------------------------------------------#
+
+SINTASSI ASTRATTA
+La sintassi è stata implementata sotto un'unico tipo exp, con l'eccezione degli elementi contenuti nelle tuple implementati dal tipo elts.
+
+Alcune spiegazioni sulla sintassi usata:
+		
+		| Function of ide * exp 
+			ide = identificatore del parametro formale
+			exp = corpo della funzione		
+		| IfThenElse of exp_1 * exp_2 * exp_3 
+			exp_1 = guardia
+			exp_2 = ramo then
+			exp_3 = ramo else
+		| LetIn of ide * exp_1 * exp_2
+			ide = identificatore da legare
+			exp_1 = valore da legare all'ide
+			exp_2 = corpo in cui vale il legame
+		| FunApply of ide * exp 
+			ide = nome della funzione da applicare
+			exp = parametro su cui viene chiamata la funzione
+		| GetIndex of exp_1 * exp_2 
+			exp_1 =	tupla a cui si vuole accedere
+			exp_2 = posizione 	
+		| GetFirstN of exp_1 * exp_2
+			exp_1 = tupla
+			exp_2 = # elementi da estrarre
+		| Map of ide * exp 
+			ide = funzione da applicare
+			exp = tupla
+		
+emptyEnv = ambiente vuoto delle espressioni. Se viene valutato ritorna un'eccezione
+emptyFunEnv = ambiente vuoto delle funzioni. Se viene valutato ritorna un'eccezione
+emptyTuplaEnv = ambiente vuoto delle tuple. Se viene valutato ritorna un'eccezione
+
+SEMANTICA OPERAZIONALE
+
+OPERATORE LET:
+	Let(variable, e, body) -> 
+		let value = eval e env fenv in
+			let env1 = bind env variable value in
+				eval body env1 fenv
+	
+	-valuto il corpo nell'ambiente in cui ho legato variable all' espressione e
+	
+OPERATORE MAP:
+	| Map (funx, exp) -> let lista = exptolist(eval exp env funenv tenv) in
+	(match lista with
+	| [] -> Tupla(Lista([]))
+	| x::xs ->let funap = FunApply(funx, x) in
+				let val1 = eval funap env funenv tenv in
+					let resto = eval (Map(funx, Tupla(Lista(xs)))) env funenv tenv in
+						let unita = appendE (val1) (resto)  in
+							Tupla(unita)
+	
+	- Estraggo l'elemento della lista, gli applico la funzione richiamando ApplyFun e richiamo ricorsivamente l'operatore Map. Alla fine, dopo l'appendE che riunisce i valori calcolati, ritorno la lista modificata
+	
